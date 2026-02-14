@@ -2,36 +2,63 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Андрюшке ;3</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Андрюше ;3</title>
     <style>
         :root { --pink: #ffb6c1; --dark-pink: #ff1493; --bg: #fff0f5; }
-        body { margin: 0; font-family: 'Arial', sans-serif; background: var(--bg); overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        body { 
+            margin: 0; 
+            font-family: 'Arial', sans-serif; 
+            background: var(--bg); 
+            overflow: hidden; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh;
+            touch-action: manipulation;
+        }
+        
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: absolute; }
         .active { display: flex; }
 
         /* Меню */
-        .menu-container { display: flex; width: 90%; max-width: 800px; align-items: center; }
-        .menu-left { flex: 1; }
-        .menu-right { flex: 1; }
-        .menu-right img { width: 100%; max-width: 300px; border-radius: 20px; }
+        .menu-container { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .menu-right img { width: 200px; border-radius: 20px; margin-bottom: 20px; }
 
         /* Кнопки */
-        button { background: var(--pink); border: none; padding: 15px 30px; margin: 10px; border-radius: 25px; font-size: 18px; font-weight: bold; cursor: pointer; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.3s; }
-        button:active { transform: scale(0.95); }
-        .btn-yes { background: #32cd32; }
-        .btn-no { background: #ff4500; position: absolute; }
+        button { 
+            background: var(--pink); 
+            border: none; 
+            padding: 15px 30px; 
+            margin: 10px; 
+            border-radius: 25px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            color: white; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            z-index: 10;
+        }
+        button:active { transform: scale(0.9); }
+        
+        .btn-yes { background: #32cd32; width: 120px; }
+        
+        .btn-no { 
+            background: #ff4500; 
+            width: 120px;
+            position: fixed; /* Фиксируем для точных координат */
+            transition: all 0.4s ease-out; /* Плавное скольжение вместо телепортации */
+            left: calc(50% + 70px);
+            top: 50%;
+        }
 
-        /* Таймер и Письмо */
-        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); max-width: 80%; max-height: 70%; overflow-y: auto; position: relative; }
-        .decor { position: absolute; width: 50px; }
-        .top-left { top: 10px; left: 10px; }
-        .top-right { top: 10px; right: 10px; }
-        .bottom-left { bottom: 10px; left: 10px; }
-        .bottom-right { bottom: 10px; right: 10px; }
+        /* Карточки */
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 85%; max-height: 70%; overflow-y: auto; }
+        .decor { position: absolute; width: 40px; pointer-events: none; }
     </style>
 </head>
-<body>
+<body onclick="initMusic()">
 
     <audio id="bgMusic" loop>
         <source src="music/love.mp3" type="audio/mpeg">
@@ -39,35 +66,30 @@
 
     <div id="menu" class="screen active">
         <div class="menu-container">
-            <div class="menu-left">
-                <h1 style="color: var(--dark-pink);">❤️Андрюшке❤️ ;3</h1>
-                <button onclick="showScreen('game')">Приглашение ;3</button><br>
-                <button onclick="showScreen('timer')">Наша история ;3</button><br>
-                <button onclick="showScreen('letter')">Письмо ;3</button>
-            </div>
-            <div class="menu-right">
-                <img src="assets/catlove1.gif" alt="Котик">
-            </div>
+            <img src="assets/catlove1.gif" alt="Котик">
+            <h1 style="color: var(--dark-pink); margin: 0;">❤️ Андрюше ❤️</h1>
+            <button onclick="showScreen('game')">Приглашение :3</button>
+            <button onclick="showScreen('timer')">Наша история :3</button>
+            <button onclick="showScreen('letter')">Письмо :3</button>
         </div>
     </div>
 
     <div id="game" class="screen">
-        <h2 id="gameQuest" style="color: var(--dark-pink);">Будешь моей валентинкой? ❤️</h2>
-        <div id="gameArea" style="width: 100%; height: 300px; position: relative;">
-            <button class="btn-yes" onclick="celebrate()">ДА!</button>
-            <button id="noBtn" class="btn-no" onmouseover="moveNo()" onclick="moveNo()">Нет</button>
-        </div>
+        <h2 id="gameQuest" style="color: var(--dark-pink); position: absolute; top: 20%;">Будешь моей валентинкой Андрюша? ;3</h2>
+        <button id="yesBtn" class="btn-yes" onclick="celebrate()" style="position: fixed; left: calc(50% - 130px); top: 50%;">ДА!</button>
+        <button id="noBtn" class="btn-no" onmouseover="moveNo()" ontouchstart="moveNo()">Нет</button>
+        
         <div id="success" style="display:none;">
-            <h2 style="color: var(--dark-pink);">Ура-а-а! Спасибо! <3</h2>
+            <h2 style="color: var(--dark-pink);">Урааа! Спасибооо! ;3</h2>
             <img src="assets/catlove2.gif" style="width: 250px;"><br>
-            <button onclick="showScreen('menu')">В меню</button>
+            <button onclick="showScreen('menu')" style="margin-top: 20px;">В меню</button>
         </div>
     </div>
 
     <div id="timer" class="screen">
         <div class="card">
             <h2 style="color: var(--dark-pink);">Мы вместе уже:</h2>
-            <h1 id="daysCount" style="font-size: 50px;">0</h1>
+            <h1 id="daysCount" style="font-size: 60px; margin: 10px 0;">0</h1>
             <p>прекрасных дней ;3</p>
             <button onclick="showScreen('menu')">Назад</button>
         </div>
@@ -75,12 +97,8 @@
 
     <div id="letter" class="screen">
         <div class="card">
-            <img src="assets/bow.png" class="decor top-left">
-            <img src="assets/heart.png" class="decor top-right">
-            <img src="assets/heart.png" class="decor bottom-left">
-            <img src="assets/bow.png" class="decor bottom-right">
-            <h2 style="color: var(--dark-pink);">❤️Письмо тебе💌</h2>
-            <p id="letterContent" style="white-space: pre-wrap; line-height: 1.6;">
+            <h2 style="color: var(--dark-pink);">❤️ Письмо тебе 💌</h2>
+            <p id="letterContent" style="white-space: pre-wrap; line-height: 1.6; text-align: left;">
                 Мой милый Андрей, Андрюша, Андрюююшечка, 
                 мой любимый котик, мой милый зайчик и единственное солнышко!
                 Мой обладатель самого прекрасного на свете имени!
@@ -106,31 +124,55 @@
     </div>
 
     <script>
-        // Функция переключения экранов
+        let musicStarted = false;
+        const music = document.getElementById('bgMusic');
+
+        function initMusic() {
+            if (!musicStarted) {
+                music.play();
+                musicStarted = true;
+            }
+        }
+
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             if(id === 'timer') updateTimer();
-            // Запуск музыки при первом взаимодействии
-            document.getElementById('bgMusic').play().catch(() => {});
+            // Сброс позиции кнопки Нет, если заходим в игру заново
+            if(id === 'game') {
+                const btn = document.getElementById('noBtn');
+                btn.style.left = 'calc(50% + 10px)';
+                btn.style.top = '50%';
+                document.getElementById('gameQuest').style.display = 'block';
+                document.getElementById('yesBtn').style.display = 'block';
+                document.getElementById('noBtn').style.display = 'block';
+                document.getElementById('success').style.display = 'none';
+            }
         }
 
-        // Логика кнопки "Нет"
         function moveNo() {
             const btn = document.getElementById('noBtn');
-            const x = Math.random() * (window.innerWidth - btn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - btn.offsetHeight);
-            btn.style.left = x + 'px';
-            btn.style.top = y + 'px';
+            const padding = 50; // Отступ от краев экрана
+            
+            // Вычисляем доступную область
+            const maxWidth = window.innerWidth - btn.offsetWidth - padding;
+            const maxHeight = window.innerHeight - btn.offsetHeight - padding;
+
+            // Генерируем новые координаты в пределах видимости
+            const newX = Math.max(padding, Math.floor(Math.random() * maxWidth));
+            const newY = Math.max(padding, Math.floor(Math.random() * maxHeight));
+
+            btn.style.left = newX + 'px';
+            btn.style.top = newY + 'px';
         }
 
         function celebrate() {
             document.getElementById('gameQuest').style.display = 'none';
-            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('yesBtn').style.display = 'none';
+            document.getElementById('noBtn').style.display = 'none';
             document.getElementById('success').style.display = 'block';
         }
 
-        // Логика таймера
         function updateTimer() {
             const startDate = new Date('2025-11-23');
             const now = new Date();
